@@ -1,0 +1,28 @@
+#!/bin/sh
+# Pre-commit hook to run PHPCS on staged PHP files
+
+# Get list of staged PHP files (adjust extensions as needed)
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E "\.(php|module|inc|install|test|profile|theme)$")
+
+# If no PHP files are staged, exit early.
+[ -z "$STAGED_FILES" ] && exit 0
+
+PASS=true
+
+echo "Running PHP CodeSniffer on staged files..."
+
+for FILE in $STAGED_FILES; do
+    echo "Checking $FILE"
+    # Run PHPCS with the Drupal standard. Adjust extensions if needed.
+    vendor/bin/phpcs --standard=Drupal --extensions=php,module,inc,install,test,profile,theme "$FILE"
+    if [ $? -ne 0 ]; then
+        PASS=false
+    fi
+done
+
+if ! $PASS; then
+    echo "PHPCS reported code style errors. Please fix them before committing."
+    exit 1
+fi
+
+exit 0

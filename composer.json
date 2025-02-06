@@ -37,6 +37,14 @@
         },
         "sort-packages": true
     },
+    "scripts": {
+        "post-install-cmd": [
+            "./scripts/install-hooks.sh"
+        ],
+        "post-update-cmd": [
+            "./scripts/install-hooks.sh"
+        ]
+    },
     "extra": {
         "drupal-scaffold": {
             "locations": {
