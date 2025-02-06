@@ -1,0 +1,14 @@
+uuid: da3b19af-9fae-47fa-98b6-180fd971961c
+langcode: en
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: vymHlgJy26BuI5GGj9-IXjwR3dRC5C0tij4BpWJnoqw
+id: feedback
+label: 'Website feedback'
+recipients:
+  - nilesh.desai16@gmail.com
+reply: ''
+weight: 0
+message: 'Your message has been sent.'
+redirect: ''
