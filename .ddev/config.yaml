@@ -1,4 +1,4 @@
-name: drupal10-demo
+name: demo-drupal10
 type: drupal10
 docroot: web
 php_version: "8.3"

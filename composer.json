@@ -37,6 +37,14 @@
         },
         "sort-packages": true
     },
+    "scripts": {
+        "post-install-cmd": [
+            "./scripts/install-hooks.sh"
+        ],
+        "post-update-cmd": [
+            "./scripts/install-hooks.sh"
+        ]
+    },
     "extra": {
         "drupal-scaffold": {
             "locations": {
@@ -93,5 +101,10 @@
                 "      composer remove drupal/core-project-message"
             ]
         }
+    },
+    "require-dev": {
+        "drupal/coder": "^8.3",
+        "slevomat/coding-standard": "^8.15",
+        "squizlabs/php_codesniffer": "^3.11"
     }
 }

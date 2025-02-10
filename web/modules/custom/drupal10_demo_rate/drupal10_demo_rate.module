@@ -1,0 +1,15 @@
+<?php
+
+/**
+ * @file
+ * Alter for rate module.
+ */
+
+use Drupal\comment\CommentInterface;
+
+/**
+ * Implements hook_comment_insert().
+ */
+function drupal10_demo_rate_comment_insert(CommentInterface $comment) {
+  \Drupal::logger('custom::')->notice('<pre><code>' . print_r("comes", TRUE) . '</code></pre>');
+}
