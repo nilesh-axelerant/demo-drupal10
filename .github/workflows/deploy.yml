@@ -1,0 +1,15 @@
+name: Demo Drupal10 Deploy
+
+on:
+  pull_request:
+    types: [opened]
+
+jobs:
+  code_quality_check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get code
+        uses: actions/checkout@v4
+      - name: Install dependencies
+        run: composer install
+
