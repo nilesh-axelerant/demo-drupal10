@@ -24,3 +24,8 @@ jobs:
 
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress
+
+      - name: Validate the code
+        run: |
+          echo "Running Coding Standards Check..."
+          vendor/bin/phpcs --standard=Drupal,DrupalPractice --extensions=php,module,inc,install,test,profile,theme web/modules/custom/
