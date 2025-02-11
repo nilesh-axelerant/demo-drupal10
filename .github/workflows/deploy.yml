@@ -4,11 +4,28 @@ on:
   pull_request:
     types: [opened, synchronize]
 
+env:
+  PANTHEON_SITE: axl-demo-site
+  PANTHEON_SITE_ID: aab34ce6-a6f1-4c00-bd8d-8f3a0f504191
+  PANTHEON_ENV: dev
+
+  # note: PATHEON_SITE_ID assumes that your Pantheon Git URL is in the format
+  # ssh://codeserver.dev.[PANTHEON_SITE_ID]@codeserver.dev.[PANTHEON_SITE_ID].drush.in:2222/~/repository.git
+  # If it is not, you'll need to update the below references accordingly to build your Pantheon Git URL.
+  PANTHEON_GIT_USER: codeserver.dev.$PANTHEON_SITE_ID
+  PANTHEON_GIT_HOSTNAME: codeserver.dev.$PANTHEON_SITE_ID.drush.in
+  PANTHEON_GIT_PORT: 2222
+
 jobs:
   code_quality_check:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
 
       - name: Validate composer.json and composer.lock
         run: composer validate --strict
@@ -42,3 +59,38 @@ jobs:
       needs: code_quality_check
       steps:
         - uses: actions/checkout@v4
+
+        - name: Install SSH Key
+          uses: shimataro/ssh-key-action@v2
+          with:
+            key: ${{ secrets.PANTHEON_SSH_PRIVATE_KEY }}
+            known_hosts: ' '
+
+        - name: Install Terminus
+          uses: pantheon-systems/terminus-github-actions@main
+          with:
+            pantheon-machine-token: ${{ secrets.TERMINUS_MACHINE_TOKEN }}
+
+        - name: Cleanup before Pantheon deploy
+          run: |
+            echo "Add any additional cleanup/compilation tasks here."
+
+        - name: Add Pantheon Git repository URL as known host
+          run: |
+            ssh-keyscan -t rsa -p ${{ env.PANTHEON_GIT_PORT }} -H ${{ env.PANTHEON_GIT_HOSTNAME }} >> ~/.ssh/known_hosts
+
+        - name: Deploy via commit to Pantheon Git repository URL
+          run: |
+            git remote add pantheon ssh://${{ env.PANTHEON_GIT_USER }}@${{ env.PANTHEON_GIT_HOSTNAME }}:${{ env.PANTHEON_GIT_PORT }}/~/repository.git;
+            git push pantheon HEAD:master --force
+
+        - name: Terminus Drush Updates
+          run: |
+            terminus env:wake ${{ env.PANTHEON_SITE }}.${{ env.PANTHEON_ENV }}
+            terminus env:code-rebuild ${{ env.PANTHEON_SITE }}.${{ env.PANTHEON_ENV }}
+            terminus drush ${{ env.PANTHEON_SITE }}.${{ env.PANTHEON_ENV }} -- deploy
+            terminus env:clear-cache ${{ env.PANTHEON_SITE }}.${{ env.PANTHEON_ENV }}
+      if:
+        contains('
+          refs/heads/main
+        ', github.ref)
