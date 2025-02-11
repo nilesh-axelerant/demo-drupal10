@@ -27,5 +27,18 @@ jobs:
 
       - name: Validate the code
         run: |
-          echo "Running Coding Standards Check..."
-          vendor/bin/phpcs --standard=Drupal,DrupalPractice --extensions=php,module,inc,install,test,profile,theme web/modules/custom
+          - echo "Running Coding Standards Check..."
+          - |
+            vendor/bin/phpcs --standard=Drupal,DrupalPractice --extensions=php,module,inc,install,test,profile,theme web/modules/custom
+            EXIT_CODE=$?
+            if [ $EXIT_CODE -eq 0 ]; then
+              echo "PHPCS validation SUCCESSFUL. All files conform to Drupal coding standards."
+            else
+              echo "PHPCS validation FAILED. Please fix the errors above."
+            fi
+            exit $EXIT_CODE
+
+  deploy_code:
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v4
