@@ -1,0 +1,43 @@
+name: Demo Drupal10 Code Quality Check
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  code_quality_check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+
+      - name: Validate composer.json and composer.lock
+        run: composer validate --strict
+
+      - name: Cache Composer packages
+        id: composer-cache
+        uses: actions/cache@v3
+        with:
+          path: vendor
+          key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress
+
+      - name: Validate the code
+        run: |
+          echo "Running Coding Standards Check..."
+          vendor/bin/phpcs --standard=Drupal,DrupalPractice --extensions=php,module,inc,install,test,profile,theme web/modules/custom
+          EXIT_CODE=$?
+          if [ $EXIT_CODE -eq 0 ]; then
+            echo "PHPCS validation SUCCESSFUL. All files conform to Drupal coding standards."
+          else
+            echo "PHPCS validation FAILED. Please fix the errors above."
+          fi
+          exit $EXIT_CODE
