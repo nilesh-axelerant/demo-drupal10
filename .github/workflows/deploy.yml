@@ -23,6 +23,8 @@ jobs:
       runs-on: ubuntu-latest
       steps:
         - uses: actions/checkout@v4
+          with:
+            fetch-depth: 0
 
         - name: Install SSH Key
           uses: shimataro/ssh-key-action@v2
@@ -42,7 +44,7 @@ jobs:
         - name: Deploy via commit to Pantheon Git repository URL
           run: |
             git remote add pantheon ssh://${{ env.PANTHEON_GIT_USER }}@${{ env.PANTHEON_GIT_HOSTNAME }}:${{ env.PANTHEON_GIT_PORT }}/~/repository.git;
-            git push pantheon HEAD:master --force
+            git push pantheon HEAD:main
 
         - name: Terminus Drush Updates
           run: |
