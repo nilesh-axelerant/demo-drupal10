@@ -1,6 +1,9 @@
 name: Demo Drupal10 Deploy
 
 on:
+  push:
+    branches:
+      - main
   pull_request:
     types: [opened, synchronize]
 
@@ -90,7 +93,3 @@ jobs:
             terminus env:code-rebuild ${{ env.PANTHEON_SITE }}.${{ env.PANTHEON_ENV }}
             terminus drush ${{ env.PANTHEON_SITE }}.${{ env.PANTHEON_ENV }} -- deploy
             terminus env:clear-cache ${{ env.PANTHEON_SITE }}.${{ env.PANTHEON_ENV }}
-      if:
-        contains('
-          refs/heads/main
-        ', github.ref)
