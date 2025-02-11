@@ -44,7 +44,7 @@ jobs:
         - name: Deploy via commit to Pantheon Git repository URL
           run: |
             git remote add pantheon ssh://${{ env.PANTHEON_GIT_USER }}@${{ env.PANTHEON_GIT_HOSTNAME }}:${{ env.PANTHEON_GIT_PORT }}/~/repository.git;
-            git push pantheon HEAD:main
+            git push pantheon HEAD:main --force
 
         - name: Terminus Drush Updates
           run: |
