@@ -41,3 +41,12 @@ jobs:
             echo "PHPCS validation FAILED. Please fix the errors above."
           fi
           exit $EXIT_CODE
+    if:
+      contains('
+        refs/heads/master
+        refs/heads/develop
+        refs/heads/test
+        refs/heads/stage
+        refs/heads/feature
+        refs/tags
+      ', github.ref)
