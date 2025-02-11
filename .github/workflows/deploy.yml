@@ -3,7 +3,7 @@ name: Demo Drupal10 Deploy
 on:
   push:
     branches:
-      - main
+      - develop
 
 env:
   PANTHEON_SITE: axl-demo-site
